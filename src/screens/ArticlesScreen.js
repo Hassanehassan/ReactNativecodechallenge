@@ -9,6 +9,6 @@ const ArticlesScreen = props => {
   );
 };
 export const screenOptions = {
-  headerTitle: 'Articles'
+  headerTitle: 'Articles',
 };
 export default ArticlesScreen;
