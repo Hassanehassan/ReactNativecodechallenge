@@ -11,105 +11,115 @@ import * as Animatable from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import LinearGradient from 'react-native-linear-gradient';
+import {Formik} from 'formik';
+import * as yup from 'yup';
 
 import Colors from '../constants/Colors';
 
-const SignInScreen = props => {
-  const [data, setData] = useState({
-    username: '',
-    password: '',
-    check_textInputChange: false,
-    secureTextEntry: true,
-  });
-  const textInputChange = val => {
-    if (val.length === 0) {
-      setData({
-        ...data,
-        username: val,
-        check_textInputChange: false,
-      });
-    } else {
-      setData({
-        ...data,
-        username: val,
-        check_textInputChange: true,
-      });
-    }
-  };
+const loginValidationSchema = yup.object().shape({
+  username: yup.string().required('Username is required'),
+  password: yup.string().required('Password is required'),
+});
 
-  const handlePasswordChange = val => {
-    setData({
-      ...data,
-      password: val,
-    });
-  };
+const SignInScreen = props => {
+  const [SecureTextEntry, setSecureTextEntry] = useState(true);
 
   const updateSecureTextEntry = () => {
-    setData({
-      ...data,
-      secureTextEntry: !data.secureTextEntry,
-    });
+    setSecureTextEntry(SecureTextEntry => !SecureTextEntry);
   };
 
   return (
-    <View style={styles.screen}>
-      <StatusBar backgroundColor={Colors.primary} barStyle="light-content" />
-      <View style={styles.header}>
-        <Text style={styles.text_header}>Welcome!</Text>
-      </View>
-      <Animatable.View animation="fadeInUpBig" style={styles.footer}>
-        <Text style={styles.text_footer}>Username</Text>
-        <View style={styles.action}>
-          <Icon name="user-o" color="#05375a" size={20} />
-          <TextInput
-            placeholder="Your Username"
-            style={styles.textInput}
-            autoCapitalize="none"
-            onChangeText={val => textInputChange(val)}
+    <Formik
+      initialValues={{username: '', password: ''}}
+      validateOnMount={true}
+      onSubmit={values => console.log(values)}
+      validationSchema={loginValidationSchema}>
+      {({
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        values,
+        touched,
+        isValid,
+        errors,
+      }) => (
+        <View style={styles.screen}>
+          <StatusBar
+            backgroundColor={Colors.primary}
+            barStyle="light-content"
           />
-          {!data.check_textInputChange ? null : (
-            <Animatable.View animation="bounceIn">
-              <Feather name="check-circle" color="green" size={20} />
-            </Animatable.View>
-          )}
-        </View>
-        <Text style={[styles.text_footer, {marginTop: 35}]}>Password</Text>
-        <View style={styles.action}>
-          <Feather name="lock" color="#05375a" size={20} />
-          <TextInput
-            placeholder="Your Password"
-            style={styles.textInput}
-            autoCapitalize="none"
-            secureTextEntry={data.secureTextEntry ? true : false}
-            onChangeText={val => handlePasswordChange(val)}
-          />
-          <TouchableNativeFeedback onPress={updateSecureTextEntry}>
-            {data.secureTextEntry ? (
-              <Feather name="eye-off" color="grey" size={20} />
-            ) : (
-              <Feather name="eye" color="grey" size={20} />
+          <View style={styles.header}>
+            <Text style={styles.text_header}>Welcome!</Text>
+          </View>
+          <Animatable.View animation="fadeInUpBig" style={styles.footer}>
+            <Text style={styles.text_footer}>Username</Text>
+            <View style={styles.action}>
+              <Icon name="user-o" color="#05375a" size={20} />
+              <TextInput
+                placeholder="Your Username"
+                style={styles.textInput}
+                autoCapitalize="none"
+                onChangeText={handleChange('username')}
+                onBlur={handleBlur('username')}
+                value={values.username}
+              />
+              {!errors.username ? (
+                <Animatable.View animation="bounceIn">
+                  <Feather name="check-circle" color="green" size={20} />
+                </Animatable.View>
+              ) : null}
+            </View>
+            {errors.username && touched.username && (
+              <Text style={styles.errors}>{errors.username}</Text>
             )}
-          </TouchableNativeFeedback>
+            <Text style={[styles.text_footer, {marginTop: 35}]}>Password</Text>
+            <View style={styles.action}>
+              <Feather name="lock" color="#05375a" size={20} />
+              <TextInput
+                placeholder="Your Password"
+                style={styles.textInput}
+                autoCapitalize="none"
+                secureTextEntry={SecureTextEntry ? true : false}
+                onChangeText={handleChange('password')}
+                onBlur={handleBlur('password')}
+                value={values.password}
+              />
+              <TouchableNativeFeedback onPress={updateSecureTextEntry}>
+                {SecureTextEntry ? (
+                  <Feather name="eye-off" color="grey" size={20} />
+                ) : (
+                  <Feather name="eye" color="grey" size={20} />
+                )}
+              </TouchableNativeFeedback>
+            </View>
+            {errors.password && touched.password && (
+              <Text style={styles.errors}>{errors.password}</Text>
+            )}
+            <View style={styles.button}>
+              <TouchableNativeFeedback
+                disabled={!isValid}
+                onPress={() => handleSubmit(values)}>
+                <LinearGradient
+                  colors={
+                    isValid ? ['#08d4c4', Colors.accent] : ['#71a7a742', 'grey']
+                  }
+                  style={styles.signIn}>
+                  <Text
+                    style={[
+                      styles.textSign,
+                      {
+                        color: '#fff',
+                      },
+                    ]}>
+                    Login
+                  </Text>
+                </LinearGradient>
+              </TouchableNativeFeedback>
+            </View>
+          </Animatable.View>
         </View>
-        <View style={styles.button}>
-          <TouchableNativeFeedback onPress={() => {}}>
-            <LinearGradient
-              colors={['#08d4c4', '#01ab9d']}
-              style={styles.signIn}>
-              <Text
-                style={[
-                  styles.textSign,
-                  {
-                    color: '#fff',
-                  },
-                ]}>
-                Login
-              </Text>
-            </LinearGradient>
-          </TouchableNativeFeedback>
-        </View>
-      </Animatable.View>
-    </View>
+      )}
+    </Formik>
   );
 };
 export const screenOptions = {
@@ -141,21 +151,22 @@ const styles = StyleSheet.create({
     fontSize: 30,
   },
   text_footer: {
-    color: '#05375a',
+    color: Colors.accent,
     fontSize: 18,
   },
   action: {
     flexDirection: 'row',
     marginTop: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#f2f2f2',
     paddingBottom: 5,
+    borderBottomColor: Colors.accent,
   },
   textInput: {
     flex: 1,
     marginTop: -12,
     paddingLeft: 10,
-    color: '#05375a',
+    color: Colors.accent,
+    fontFamily: 'bold',
   },
   button: {
     alignItems: 'center',
@@ -171,6 +182,12 @@ const styles = StyleSheet.create({
   textSign: {
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  errors: {
+    fontSize: 14,
+    color: 'red',
+    fontWeight: 'bold',
+    marginTop: 5,
   },
 });
 export default SignInScreen;
