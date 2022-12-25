@@ -6,6 +6,7 @@ import {
   TouchableNativeFeedback,
   TextInput,
   StatusBar,
+  ActivityIndicator,
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -13,6 +14,8 @@ import Feather from 'react-native-vector-icons/Feather';
 import LinearGradient from 'react-native-linear-gradient';
 import {Formik} from 'formik';
 import * as yup from 'yup';
+import {useDispatch, useSelector} from 'react-redux';
+import {postLoginInput} from '../store/action/PostLoginInput';
 
 import Colors from '../constants/Colors';
 
@@ -27,22 +30,24 @@ const SignInScreen = props => {
   const updateSecureTextEntry = () => {
     setSecureTextEntry(SecureTextEntry => !SecureTextEntry);
   };
+  const dispatch = useDispatch();
+  const {isAuth, isLoading, error} = useSelector(state => state.login);
+  console.log(isAuth, isLoading, error);
+
+  const submitHandler = user => {
+    dispatch(postLoginInput(user));
+  };
 
   return (
     <Formik
       initialValues={{username: '', password: ''}}
       validateOnMount={true}
-      onSubmit={values => console.log(values)}
+      onSubmit={(values, actions) => {
+        submitHandler(values);
+        actions.resetForm();
+      }}
       validationSchema={loginValidationSchema}>
-      {({
-        handleChange,
-        handleBlur,
-        handleSubmit,
-        values,
-        touched,
-        isValid,
-        errors,
-      }) => (
+      {({handleChange, handleBlur, handleSubmit, values, touched, errors}) => (
         <View style={styles.screen}>
           <StatusBar
             backgroundColor={Colors.primary}
@@ -63,7 +68,7 @@ const SignInScreen = props => {
                 onBlur={handleBlur('username')}
                 value={values.username}
               />
-              {!errors.username ? (
+              {!errors.username && values.username.length !== 0 ? (
                 <Animatable.View animation="bounceIn">
                   <Feather name="check-circle" color="green" size={20} />
                 </Animatable.View>
@@ -97,11 +102,13 @@ const SignInScreen = props => {
             )}
             <View style={styles.button}>
               <TouchableNativeFeedback
-                disabled={!isValid}
-                onPress={() => handleSubmit(values)}>
+                disabled={!values.username || !values.password || isLoading}
+                onPress={handleSubmit}>
                 <LinearGradient
                   colors={
-                    isValid ? ['#08d4c4', Colors.accent] : ['#71a7a742', 'grey']
+                    !values.username || !values.password || isLoading
+                      ? ['#71a7a742', 'grey']
+                      : ['#08d4c4', Colors.accent]
                   }
                   style={styles.signIn}>
                   <Text
@@ -116,6 +123,16 @@ const SignInScreen = props => {
                 </LinearGradient>
               </TouchableNativeFeedback>
             </View>
+            {isLoading && (
+              <View>
+                <ActivityIndicator size="large" color="rgb(48, 128, 90)" />
+              </View>
+            )}
+            {error && (
+              <View style={styles.errorcontainer}>
+                <Text style={styles.errors}>{error}</Text>
+              </View>
+            )}
           </Animatable.View>
         </View>
       )}
@@ -167,6 +184,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     color: Colors.accent,
     fontFamily: 'bold',
+    fontSize: 20,
   },
   button: {
     alignItems: 'center',
@@ -188,6 +206,11 @@ const styles = StyleSheet.create({
     color: 'red',
     fontWeight: 'bold',
     marginTop: 5,
+    textAlign: 'center',
+    fontSize: 15,
+  },
+  errorcontainer: {
+    marginTop: 10,
   },
 });
 export default SignInScreen;
