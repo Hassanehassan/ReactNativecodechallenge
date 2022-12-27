@@ -35,7 +35,7 @@ const SignInScreen = props => {
 
   const submitHandler = user => {
     dispatch(postLoginInput(user));
-  }
+  };
 
   return (
     <Formik

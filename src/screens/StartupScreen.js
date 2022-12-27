@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Dimensions,
   Image,
+  StatusBar,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -15,6 +16,7 @@ import Colors from '../constants/Colors';
 const StartupScreen = props => {
   return (
     <View style={styles.screen}>
+      <StatusBar backgroundColor={Colors.primary} />
       <View style={styles.header}>
         <Image
           source={require('../../assets/logo1.jpeg')}

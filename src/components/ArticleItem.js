@@ -14,7 +14,7 @@ const ArticleItem = props => {
       <View style={{flex: 1}}>
         <Text>
           {abstract.substring(0, 100)}
-          {abstract.length > 100 ? <Text>...</Text> :""}
+          {abstract.length > 100 ? <Text>...</Text> : ''}
         </Text>
       </View>
       <View style={styles.urlcontainer}>

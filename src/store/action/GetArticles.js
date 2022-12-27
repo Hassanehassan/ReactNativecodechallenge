@@ -1,20 +1,18 @@
 import {articleaction} from '../Slice/ArticleSlice';
+import config from '../../../config';
 
 export const getArticles = page => {
   return async (dispatch, getState) => {
     const accessToken = getState().login.token;
+    dispatch(articleaction.getAllArticlesPending());
     try {
-      dispatch(articleaction.getAllArticlesPending());
-      const response = await fetch(
-        'http://34.245.213.76:3000/articles?page=' + page,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+      const response = await fetch(`${config.API_URL_GET}?page=` + page, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
-      );
+      });
       if (!response.ok) {
-        throw new Error('Could not articles data data!');
+        throw new Error('Failed to connect');
       }
       const data = await response.json();
       const articles = data.response.docs;

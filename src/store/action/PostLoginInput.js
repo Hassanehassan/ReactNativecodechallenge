@@ -1,10 +1,11 @@
 import {loginaction} from '../Slice/LoginSlice';
+import config from '../../../config';
 
 export const postLoginInput = user => {
   return async dispatch => {
+    dispatch(loginaction.loginPending());
     try {
-      dispatch(loginaction.loginPending());
-      const response = await fetch('http://34.245.213.76:3000/auth/signin', {
+      const response = await fetch(config.API_URL_POST, {
         method: 'POST',
         body: JSON.stringify({
           username: user.username,
