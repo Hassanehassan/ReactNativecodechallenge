@@ -32,11 +32,10 @@ const SignInScreen = props => {
   };
   const dispatch = useDispatch();
   const {isAuth, isLoading, error} = useSelector(state => state.login);
-  console.log(isAuth, isLoading, error);
 
   const submitHandler = user => {
     dispatch(postLoginInput(user));
-  };
+  }
 
   return (
     <Formik
