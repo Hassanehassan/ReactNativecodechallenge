@@ -27,10 +27,12 @@ const articleslice = createSlice({
         );
       });
     },
-    refreshing(state){
+    refreshing(state) {
       state.articles = [];
       state.lastRes = [];
       state.errors = null;
+      state.filteredArticles = [];
+      state.searchInput = '';
     },
     getAllArticlesPending(state) {
       state.isLoading = true;

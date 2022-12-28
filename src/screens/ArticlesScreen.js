@@ -2,14 +2,12 @@ import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
-  TouchableNativeFeedback,
   StyleSheet,
   FlatList,
   StatusBar,
   ActivityIndicator,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import LinearGradient from 'react-native-linear-gradient';
 
 import Colors from '../constants/Colors';
 import {loginaction} from '../store/Slice/LoginSlice';
@@ -17,6 +15,7 @@ import ArticleItem from '../components/ArticleItem';
 import {getArticles} from '../store/action/GetArticles';
 import SearchComponent from '../components/SearchComponent';
 import {articleaction} from '../store/Slice/ArticleSlice';
+import MyButton from '../components/MyButton';
 
 const ArticlesScreen = props => {
   const [currentpage, setcurrentpage] = useState(0);
@@ -64,21 +63,26 @@ const ArticlesScreen = props => {
                 dispatch(getArticles(currentpage));
                 setisRefreshing(false);
               }
-            : null
+            : () => {
+                setisRefreshing(true);
+                if (currentpage !== 0) {
+                  setcurrentpage(0);
+                  dispatch(articleaction.refreshing());
+                }
+                setisRefreshing(false);
+              }
         }
         refreshing={isRefreshing}
       />
       {isLoading && <ActivityIndicator size="large" color="rgb(48, 128, 90)" />}
       {errors && !isLoading && (
-        <View
-          style={styles.containerError}>
+        <View style={styles.containerError}>
           <Text style={styles.error}>{errors}</Text>
           <Text style={styles.error}>please pull down to refresh</Text>
         </View>
       )}
       {articleshow.length === 0 && !first && (
-        <View
-          style={styles.containerError}>
+        <View style={styles.containerError}>
           <Text style={styles.error}>{messageShow}</Text>
         </View>
       )}
@@ -89,22 +93,27 @@ export const screenOptions = {
   headerTitle: '',
   headerRight: () => {
     const dispatch = useDispatch();
+    const logouHandler = () => {
+      dispatch(loginaction.logout());
+      dispatch(articleaction.refreshing());
+    };
     return (
-      <View style={styles.buttoncontainer}>
-        <TouchableNativeFeedback
-          onPress={() => {
-            dispatch(loginaction.logout());
-            dispatch(articleaction.refreshing());
-          }}>
-          <LinearGradient style={{borderRadius: 10}} colors={['#fff', '#fff']}>
-            <Text style={styles.textSign}>Logout</Text>
-          </LinearGradient>
-        </TouchableNativeFeedback>
-      </View>
+      <MyButton
+        viewStyle={styles.buttoncontainer}
+        onPress={logouHandler}
+        linearStyle={{borderRadius: 10}}
+        colors={['#fff', '#fff']}
+        textStyle={styles.textSign}
+        text="Logout"
+      />
     );
   },
   headerLeft: () => {
-    return <SearchComponent />;
+    const dispatch = useDispatch();
+    const searchHandler = value => {
+      dispatch(articleaction.searchArticles(value));
+    };
+    return <SearchComponent onSearch={searchHandler} />;
   },
 };
 
@@ -113,15 +122,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingVertical: 10,
-  },
-  textSign: {
-    fontSize: 20,
-    color: Colors.primary,
-    margin: 2,
-  },
-  buttoncontainer: {
-    width: 70,
-    justifyContent: 'center',
   },
   error: {
     color: Colors.primary,
@@ -132,6 +132,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
+  },
+  buttoncontainer: {
+    width: 70,
+    justifyContent: 'center',
+  },
+  textSign: {
+    fontSize: 20,
+    color: Colors.primary,
+    margin: 2,
   },
 });
 

@@ -5,7 +5,6 @@ import Colors from '../constants/Colors';
 
 const ArticleItem = props => {
   const {headline, abstract, web_url} = props.article;
-
   return (
     <View style={styles.container}>
       <View style={styles.titlecontainer}>

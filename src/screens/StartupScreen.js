@@ -26,7 +26,7 @@ const StartupScreen = props => {
       </View>
       <View style={styles.footer}>
         <Text style={styles.title}>
-          Ready to see the most beautiful articles?{' '}
+          Ready to see the most beautiful articles?
         </Text>
         <Text style={styles.text}>Sign in with account</Text>
         <View style={styles.button}>
@@ -34,7 +34,7 @@ const StartupScreen = props => {
             onPress={() => props.navigation.navigate('login')}>
             <LinearGradient
               colors={['#08d4c4', '#01ab9d']}
-              style={styles.signIn}>
+              style={styles.gradient}>
               <Text style={styles.textSign}>Let's Go</Text>
               <MaterialIcons name="navigate-next" color="#fff" size={20} />
             </LinearGradient>
@@ -84,12 +84,13 @@ const styles = StyleSheet.create({
   text: {
     color: 'grey',
     marginTop: 5,
+    fontSize: 15,
   },
   button: {
     alignItems: 'flex-end',
     marginTop: 30,
   },
-  signIn: {
+  gradient: {
     width: 150,
     height: 40,
     justifyContent: 'center',

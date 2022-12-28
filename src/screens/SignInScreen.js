@@ -4,20 +4,20 @@ import {
   Text,
   StyleSheet,
   TouchableNativeFeedback,
-  TextInput,
   StatusBar,
   ActivityIndicator,
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
-import LinearGradient from 'react-native-linear-gradient';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import {useDispatch, useSelector} from 'react-redux';
-import {postLoginInput} from '../store/action/PostLoginInput';
 
 import Colors from '../constants/Colors';
+import Input from '../components/Input';
+import {postLoginInput} from '../store/action/PostLoginInput';
+import MyButton from '../components/MyButton';
 
 const loginValidationSchema = yup.object().shape({
   username: yup.string().required('Username is required'),
@@ -56,72 +56,67 @@ const SignInScreen = props => {
             <Text style={styles.text_header}>Welcome!</Text>
           </View>
           <Animatable.View animation="fadeInUpBig" style={styles.footer}>
-            <Text style={styles.text_footer}>Username</Text>
-            <View style={styles.action}>
-              <Icon name="user-o" color="#05375a" size={20} />
-              <TextInput
+            <View style={{marginBottom: 20}}>
+              <Input
+                Icon={Icon}
                 placeholder="Your Username"
-                style={styles.textInput}
-                autoCapitalize="none"
                 onChangeText={handleChange('username')}
                 onBlur={handleBlur('username')}
                 value={values.username}
-              />
-              {!errors.username && values.username.length !== 0 ? (
-                <Animatable.View animation="bounceIn">
-                  <Feather name="check-circle" color="green" size={20} />
-                </Animatable.View>
-              ) : null}
+                name="user-o"
+                text="Username">
+                {!errors.username && values.username.length !== 0 ? (
+                  <Animatable.View animation="bounceIn">
+                    <Feather name="check-circle" color="green" size={20} />
+                  </Animatable.View>
+                ) : null}
+              </Input>
+              {errors.username && touched.username && (
+                <Text style={styles.errors}>{errors.username}</Text>
+              )}
             </View>
-            {errors.username && touched.username && (
-              <Text style={styles.errors}>{errors.username}</Text>
-            )}
-            <Text style={[styles.text_footer, {marginTop: 35}]}>Password</Text>
-            <View style={styles.action}>
-              <Feather name="lock" color="#05375a" size={20} />
-              <TextInput
+
+            <View>
+              <Input
+                Icon={Feather}
                 placeholder="Your Password"
-                style={styles.textInput}
-                autoCapitalize="none"
-                secureTextEntry={SecureTextEntry ? true : false}
                 onChangeText={handleChange('password')}
+                secureTextEntry={SecureTextEntry ? true : false}
                 onBlur={handleBlur('password')}
                 value={values.password}
-              />
-              <TouchableNativeFeedback onPress={updateSecureTextEntry}>
-                {SecureTextEntry ? (
-                  <Feather name="eye-off" color="grey" size={20} />
-                ) : (
-                  <Feather name="eye" color="grey" size={20} />
-                )}
-              </TouchableNativeFeedback>
+                name="lock"
+                text="Password">
+                <TouchableNativeFeedback onPress={updateSecureTextEntry}>
+                  {SecureTextEntry ? (
+                    <Feather name="eye-off" color="grey" size={20} />
+                  ) : (
+                    <Feather name="eye" color="grey" size={20} />
+                  )}
+                </TouchableNativeFeedback>
+              </Input>
+              {errors.password && touched.password && (
+                <Text style={styles.errors}>{errors.password}</Text>
+              )}
             </View>
-            {errors.password && touched.password && (
-              <Text style={styles.errors}>{errors.password}</Text>
-            )}
-            <View style={styles.button}>
-              <TouchableNativeFeedback
-                disabled={!values.username || !values.password || isLoading}
-                onPress={handleSubmit}>
-                <LinearGradient
-                  colors={
-                    !values.username || !values.password || isLoading
-                      ? ['#71a7a742', 'grey']
-                      : ['#08d4c4', Colors.accent]
-                  }
-                  style={styles.signIn}>
-                  <Text
-                    style={[
-                      styles.textSign,
-                      {
-                        color: '#fff',
-                      },
-                    ]}>
-                    Login
-                  </Text>
-                </LinearGradient>
-              </TouchableNativeFeedback>
-            </View>
+
+            <MyButton
+              viewStyle={styles.button}
+              onPress={handleSubmit}
+              linearStyle={styles.signIn}
+              disabled={!values.username || !values.password || isLoading}
+              colors={
+                !values.username || !values.password || isLoading
+                  ? ['#71a7a742', 'grey']
+                  : ['#08d4c4', Colors.accent]
+              }
+              textStyle={[
+                styles.textSign,
+                {
+                  color: '#fff',
+                },
+              ]}
+              text="login"
+            />
             {isLoading && (
               <View>
                 <ActivityIndicator size="large" color="rgb(48, 128, 90)" />
@@ -165,25 +160,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 30,
-  },
-  text_footer: {
-    color: Colors.accent,
-    fontSize: 18,
-  },
-  action: {
-    flexDirection: 'row',
-    marginTop: 10,
-    borderBottomWidth: 1,
-    paddingBottom: 5,
-    borderBottomColor: Colors.accent,
-  },
-  textInput: {
-    flex: 1,
-    marginTop: -12,
-    paddingLeft: 10,
-    color: Colors.accent,
-    fontFamily: 'bold',
-    fontSize: 20,
   },
   button: {
     alignItems: 'center',

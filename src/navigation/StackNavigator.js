@@ -16,7 +16,6 @@ const defaultNavOptions = {
   headerStyle: {
     backgroundColor: Colors.primary,
   },
-  headerTintColor: 'white',
 };
 
 const Stack = createNativeStackNavigator();
