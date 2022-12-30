@@ -4,7 +4,7 @@ import config from '../../../config';
 export const postLoginInput = user => {
   return async dispatch => {
     dispatch(loginaction.loginPending());
-    try {
+    try{
       const response = await fetch(config.API_URL_POST, {
         method: 'POST',
         body: JSON.stringify({

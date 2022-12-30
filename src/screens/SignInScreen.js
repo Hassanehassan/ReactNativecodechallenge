@@ -15,9 +15,9 @@ import * as yup from 'yup';
 import {useDispatch, useSelector} from 'react-redux';
 
 import Colors from '../constants/Colors';
-import Input from '../components/Input';
+import Input from '../components/UI/Input';
 import {postLoginInput} from '../store/action/PostLoginInput';
-import MyButton from '../components/MyButton';
+import MyButton from '../components/UI/MyButton';
 
 const loginValidationSchema = yup.object().shape({
   username: yup.string().required('Username is required'),
@@ -31,7 +31,7 @@ const SignInScreen = props => {
     setSecureTextEntry(SecureTextEntry => !SecureTextEntry);
   };
   const dispatch = useDispatch();
-  const {isAuth, isLoading, error} = useSelector(state => state.login);
+  const { isLoading, error} = useSelector(state => state.login);
 
   const submitHandler = user => {
     dispatch(postLoginInput(user));
@@ -102,6 +102,7 @@ const SignInScreen = props => {
             <MyButton
               viewStyle={styles.button}
               onPress={handleSubmit}
+              testID="Button"
               linearStyle={styles.signIn}
               disabled={!values.username || !values.password || isLoading}
               colors={

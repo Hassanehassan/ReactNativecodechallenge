@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, TextInput, StyleSheet} from 'react-native';
 
-import Colors from '../constants/Colors';
+import Colors from '../../constants/Colors';
 
 const Input = props => {
   const {

@@ -11,11 +11,11 @@ import {useDispatch, useSelector} from 'react-redux';
 
 import Colors from '../constants/Colors';
 import {loginaction} from '../store/Slice/LoginSlice';
-import ArticleItem from '../components/ArticleItem';
+import ArticleItem from '../components/Articles/ArticleItem';
 import {getArticles} from '../store/action/GetArticles';
-import SearchComponent from '../components/SearchComponent';
+import SearchComponent from '../components/Articles/SearchComponent';
 import {articleaction} from '../store/Slice/ArticleSlice';
-import MyButton from '../components/MyButton';
+import MyButton from '../components/UI/MyButton';
 
 const ArticlesScreen = props => {
   const [currentpage, setcurrentpage] = useState(0);
@@ -65,7 +65,7 @@ const ArticlesScreen = props => {
               }
             : () => {
                 setisRefreshing(true);
-                if (currentpage !== 0) {
+                if (currentpage !== 0 && !searchInput) {
                   setcurrentpage(0);
                   dispatch(articleaction.refreshing());
                 }
@@ -109,11 +109,12 @@ export const screenOptions = {
     );
   },
   headerLeft: () => {
+    const {searchInput}=useSelector(state=>state.article)
     const dispatch = useDispatch();
     const searchHandler = value => {
       dispatch(articleaction.searchArticles(value));
     };
-    return <SearchComponent onSearch={searchHandler} />;
+    return <SearchComponent value={searchInput} onSearch={searchHandler} />;
   },
 };
 

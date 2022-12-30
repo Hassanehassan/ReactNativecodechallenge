@@ -6,10 +6,12 @@ const MyButton = props => {
   const {viewStyle, onPress, linearStyle, colors, textStyle, text, disabled} =
     props;
   return (
-    <View style={viewStyle}>
+    <View style={viewStyle} testID={props.testID}>
       <TouchableNativeFeedback onPress={onPress} disabled={disabled}>
         <LinearGradient style={linearStyle} colors={colors}>
-          <Text style={textStyle}>{text}</Text>
+          <View>
+            <Text style={textStyle}>{text}</Text>
+          </View>
         </LinearGradient>
       </TouchableNativeFeedback>
     </View>
